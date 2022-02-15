@@ -172,7 +172,7 @@ class CPU {
     
     func execute() {
         self.pc_reg += UInt16(self.instruction!.get_instruction_length())
-        let value: NESMemValue = NESMemValue(uint8: self.instruction!.execute(cls: self.instruction as! Addressing, cpu: self, data_bytes: self.data_bytes!))
+        let value: NESMemValue = NESMemValue(uint8: self.instruction!.execute(addr: self.instruction as! Addressing, cpu: self, data_bytes: self.data_bytes!))
         self.status_reg!.update(self.instruction!, value: value)
     }
     

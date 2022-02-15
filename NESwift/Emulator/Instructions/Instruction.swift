@@ -20,11 +20,11 @@ protocol HasInstructionValues {
 }
 
 protocol Instruction: HasInstructionValues {
-    func get_address(cls: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt16?
-    func apply_side_effects(cls: Addressing, cpu: CPU)
-    func get_data(cls: Addressing, cpu: CPU, memory_address: UInt16?, data_bytes: [UInt8]) -> NESMemValue
-    func write(cls: Addressing, cpu: CPU, memory_address: UInt16?, value: NESMemValue) -> NESMemValue?
-    func execute(cls: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt8
+    func get_address(addr: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt16?
+    func apply_side_effects(addr: Addressing, cpu: CPU)
+    func get_data(addr: Addressing, cpu: CPU, memory_address: UInt16?, data_bytes: [UInt8]) -> NESMemValue
+    func write(addr: Addressing, cpu: CPU, memory_address: UInt16?, value: NESMemValue) -> NESMemValue?
+    func execute(addr: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt8
     func get_instruction_length() -> UInt8
 }
 extension Instruction {
@@ -49,24 +49,24 @@ extension Instruction {
         set { instructionValues.data_length = newValue }
     }
     
-    func get_data(cls: Addressing, cpu: CPU, memory_address: UInt16?, data_bytes: [UInt8]) -> NESMemValue {
+    func get_data(addr: Addressing, cpu: CPU, memory_address: UInt16?, data_bytes: [UInt8]) -> NESMemValue {
         return cpu.get_memory(memory_address!, num_bytes: 1)
     }
 }
 
 class WritesToMem {
-    func write(cls: Addressing, cpu: CPU, memory_address: UInt16?, value: NESMemValue) -> NESMemValue? {
+    func write(addr: Addressing, cpu: CPU, memory_address: UInt16?, value: NESMemValue) -> NESMemValue? {
         try! cpu.set_memory(location: memory_address!, value: value, num_bytes: 1)
         return nil
     }
     // Force override on child class
-    func get_address(cls: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt16? {
+    func get_address(addr: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt16? {
         return nil
     }
-    func apply_side_effects(cls: Addressing, cpu: CPU) {
+    func apply_side_effects(addr: Addressing, cpu: CPU) {
         return
     }
-    func execute(cls: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt8 {
+    func execute(addr: Addressing, cpu: CPU, data_bytes: [UInt8]) -> UInt8 {
         return 0
     }
     func get_instruction_length() -> UInt8 {
